@@ -40,18 +40,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
+    var screenName by remember { mutableStateOf("Home") }
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        screenName = navController.currentBackStackEntry?.destination?.route ?: "Home"
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("animation app") },
+                title = { Text(screenName) },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle navigation */ }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         }
-    ) { padding -> // Use the padding parameter here
+    ) { padding ->
         NavHost(navController, startDestination = "home", modifier = Modifier.padding(padding)) {
             composable("home") { HomeScreen(navController) }
             composable("transition") { TransitionScreen(navController) }
